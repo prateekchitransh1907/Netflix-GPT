@@ -1,12 +1,76 @@
+import { useState } from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { logoutUser, signInUser } from "../utils/userSlice";
+import { LOGO_URL, USER_PIC_URL } from "../utils/constants";
 const Header = () => {
+  const navigate = useNavigate();
+  const [showMenu, setShowMenu] = useState(false);
+  const user = useSelector((store) => store.user);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+        const { uid, email, displayName } = user;
+        dispatch(
+          signInUser({ uid: uid, email: email, displayName: displayName })
+        );
+        // navigate to browser page
+        navigate("/browse");
+      } else {
+        // User is signed out
+        dispatch(logoutUser());
+        navigate("/");
+      }
+    });
+
+    return () => {
+      //Unsubscribe if the component unmounts
+      unsubscribe();
+    };
+  }, []);
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
   return (
-    <div className="absolute px-8 py-2 bg-gradient-to-b from-black w-full z-10">
-      <img
-        className="w-44"
-        alt="netflix-logo"
-        src="https://cdn.cookielaw.org/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png
-"
-      />
+    <div className="absolute px-8 py-2 bg-gradient-to-b from-black w-full z-10 flex justify-between">
+      <img className="w-44" alt="netflix-logo" src={LOGO_URL} />
+      {user && (
+        <div className="flex p-4">
+          <img
+            onClick={() => {
+              setShowMenu(!showMenu);
+            }}
+            className="w-12 h-12 rounded-md"
+            src={USER_PIC_URL}
+            alt="user-icon"
+          />
+          {showMenu && (
+            <div className="absolute text-white font-thin right-12 top-20 z-10 w-56 origin-top-right rounded-md bg-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <p className="block p-2 m-1 font-bold">Hey, {user.displayName}</p>
+              <button className="block p-2 m-1 ">Payments</button>
+              <button className="block p-2 m-1">Account</button>
+              <button className="block p-2 m-1">Settings</button>
+              <button className="block p-2 m-1" onClick={handleLogout}>
+                Sign Out
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
