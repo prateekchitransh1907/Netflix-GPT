@@ -7,11 +7,18 @@ import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { logoutUser, signInUser } from "../utils/userSlice";
-import { LOGO_URL, USER_PIC_URL } from "../utils/constants";
+import {
+  LOGO_URL,
+  SUPPORTED_LANGUAGES,
+  USER_PIC_URL,
+} from "../utils/constants";
+import { toggleGptSearchView } from "../utils/gptSlice";
+import { changeLanguage } from "../utils/configSlice";
 const Header = () => {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const user = useSelector((store) => store.user);
+  const useGpt = useSelector((store) => store.gpt.showGptSearch);
   const dispatch = useDispatch();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -45,11 +52,37 @@ const Header = () => {
         // An error happened.
       });
   };
+  const handleGptToggle = () => {
+    dispatch(toggleGptSearchView());
+  };
+  const handleLangChange = (e) => {
+    dispatch(changeLanguage(e.target.value));
+  };
   return (
     <div className="absolute px-8 py-2 bg-gradient-to-b from-black w-full z-10 flex justify-between">
       <img className="w-44" alt="netflix-logo" src={LOGO_URL} />
       {user && (
         <div className="flex p-4">
+          {useGpt && (
+            <select
+              onChange={handleLangChange}
+              className="p-2 text-white bg-transparent font-bold outline-none border-0 focus:ring-0 focus:outline-none"
+            >
+              {SUPPORTED_LANGUAGES.map((lang) => {
+                return (
+                  <option key={lang.identifier} value={lang.identifier}>
+                    {lang.name}
+                  </option>
+                );
+              })}
+            </select>
+          )}
+          <button
+            className="mx-6 text-white font-semibold"
+            onClick={handleGptToggle}
+          >
+            {!useGpt ? "꩜ Use GPT" : "🎬 Back to Movies"}
+          </button>
           <img
             onClick={() => {
               setShowMenu(!showMenu);
@@ -59,7 +92,7 @@ const Header = () => {
             alt="user-icon"
           />
           {showMenu && (
-            <div className="absolute text-white font-thin right-12 top-20 z-10 w-56 origin-top-right rounded-md bg-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div className="absolute text-white font-thin right-12 top-20 z-20 w-56 origin-top-right rounded-md bg-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <p className="block p-2 m-1 font-bold">Hey, {user.displayName}</p>
               <button className="block p-2 m-1 ">Payments</button>
               <button className="block p-2 m-1">Account</button>

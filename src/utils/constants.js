@@ -12,3 +12,20 @@ export const FETCH_OPTIONS = {
 };
 
 export const MOVIE_POSTER_CDN = "https://image.tmdb.org/t/p/w500";
+export const BG_IMG =
+  "https://assets.nflxext.com/ffe/siteui/vlv3/81d64f3c-9627-4741-8f74-422bf35f9f1d/web/IN-en-20241104-TRIFECTA-perspective_55263ea2-af7f-40ed-9cf0-7029a9b9baf4_small.jpg";
+export const SUPPORTED_LANGUAGES = [
+  {
+    identifier: "en",
+    name: "English",
+  },
+  {
+    identifier: "fr",
+    name: "French",
+  },
+  {
+    identifier: "hindi",
+    name: "Hindi",
+  },
+];
+const OPEN_AI_KEY = "";
