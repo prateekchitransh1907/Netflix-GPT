@@ -59,14 +59,14 @@ const Header = () => {
     dispatch(changeLanguage(e.target.value));
   };
   return (
-    <div className="absolute px-8 py-2 bg-gradient-to-b from-black w-full z-10 flex justify-between">
-      <img className="w-44" alt="netflix-logo" src={LOGO_URL} />
+    <div className="absolute px-8 py-2 bg-gradient-to-b from-black w-full z-10 flex justify-between flex-col md:flex-row">
+      <img className="w-44 mx-auto md:mx-0" alt="netflix-logo" src={LOGO_URL} />
       {user && (
-        <div className="flex p-4">
+        <div className="flex p-4 justify-between md:justify-normal">
           {useGpt && (
             <select
               onChange={handleLangChange}
-              className="p-2 text-white bg-transparent font-bold outline-none border-0 focus:ring-0 focus:outline-none"
+              className="hidden md:block p-2 text-white bg-transparent font-bold outline-none border-0 focus:ring-0 focus:outline-none"
             >
               {SUPPORTED_LANGUAGES.map((lang) => {
                 return (
@@ -78,25 +78,25 @@ const Header = () => {
             </select>
           )}
           <button
-            className="mx-6 text-white font-semibold"
+            className="md:mx-6 text-white font-semibold"
             onClick={handleGptToggle}
           >
-            {!useGpt ? "꩜ Use GPT" : "🎬 Back to Movies"}
+            {!useGpt ? "꩜ Use GPT" : "🎬 Movies"}
           </button>
           <img
             onClick={() => {
               setShowMenu(!showMenu);
             }}
-            className="w-12 h-12 rounded-md"
+            className="md:w-12 md:h-12 rounded-md w-6 h-6"
             src={USER_PIC_URL}
             alt="user-icon"
           />
           {showMenu && (
-            <div className="absolute text-white font-thin right-12 top-20 z-20 w-56 origin-top-right rounded-md bg-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div className="absolute text-white font-thin right-12 md:top-20 top-40 z-20 md:w-56 origin-top-right rounded-md bg-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <p className="block p-2 m-1 font-bold">Hey, {user.displayName}</p>
-              <button className="block p-2 m-1 ">Payments</button>
-              <button className="block p-2 m-1">Account</button>
-              <button className="block p-2 m-1">Settings</button>
+              <button className="hidden md:block p-2 m-1 ">Payments</button>
+              <button className="hidden md:block p-2 m-1">Account</button>
+              <button className="hidden md:block p-2 m-1">Settings</button>
               <button className="block p-2 m-1" onClick={handleLogout}>
                 Sign Out
               </button>
